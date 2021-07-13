@@ -4,6 +4,7 @@ from werkzeug.utils import redirect, secure_filename
 import os
 from Analizer import analize_file
 import datetime
+import json
 
 app = flask.Flask(__name__)
 
@@ -23,6 +24,7 @@ if not os.path.exists(RESULT_FOLDER):
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 
 @app.route("/upload", methods=["POST"])
@@ -62,9 +64,9 @@ def index():
         valid_columns = analizor.columns
         if set(bys).issubset(set(valid_columns)):
             for by in bys:
-                objs_list[by] = analizor[by].value_counts()
+                objs_list[by] = analizor[by].value_counts().to_json()
+                print(objs_list[by])
             
-
     return flask.render_template('base.html', objs_list=objs_list)
 
     
