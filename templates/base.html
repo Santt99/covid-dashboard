@@ -6,33 +6,33 @@
     <title>todo app</title>
 </head>
 <body>
-        <div id="ages"></div>
-        <div id="sex"></div>
-        <div id="agessex"></div>
-        <div id="result"></div>
-        <div id="region"></div>
-        <div id="paciente"></div>
-        <div id="pacienteage"></div>
-        <!--
+<input type="checkbox" id="agesCheck" onchange="changeUI()"> <label for="agesCheck">Ages</label>
+<input type="checkbox" id="sexCheck" onchange="changeUI()"> <label for="sexCheck">Sex</label>
+<input type="checkbox" id="agesSexCheck" onchange="changeUI()"> <label for="agesSexCheck" disabled>Ages and sex</label>
+<input type="checkbox" id="resultCheck" onchange="changeUI()"> <label for="resultCheck" disabled>Results</label>
+<input type="checkbox" id="regionCheck" onchange="changeUI()"> <label for="regionCheck">Region</label>
+<input type="checkbox" id="pacienteCheck" onchange="changeUI()"> <label for="pacienteCheck">Paciente Type</label>
+<input type="checkbox" id="pacienteAgeCheck" onchange="changeUI()"> <label for="pacienteAgeCheck" disabled>Paciente Age</label>
+
+
 <div id="ages" style="display: none"></div>
 <div id="sex" style="display: none"></div>
 <div id="agessex" style="display: none"></div>
 <div id="result" style="display: none"></div>
 <div id="region" style="display: none"></div>
 <div id="paciente" style="display: none"></div>
-<div id="pacienteage" style="display: none"></div>-->
+<div id="pacienteage" style="display: none"></div>
 
 
 <h1> todo app </h1>
 <form action="/upload" method="post" enctype="multipart/form-data">
     <div>
         <label for="file"> Add File </label>
-        <input type="file" name="file" >
+        <input type="file" name="file">
         <br>
         <button type=submit>Submit</button>
     </div>
 </form>
-<!--
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
@@ -42,16 +42,21 @@
 
     // Draw the chart and set the chart values
     function drawChart() {
-        
+
         var allData = {{ objs_list|safe }};
 
-        var ages = allData[0];
-        var sex = allData[1];
+        var ages = Object.entries(allData['EDAD']);
+        var sex = Object.entries(allData['SEXO']);
         var agesSex = allData[2];
         var result = allData[3];
-        var region = allData[4];
-        var paciente = allData[5];
+        var region = Object.entries(allData['ENTIDAD_RES']);
+        var paciente = Object.entries(allData['TIPO_PACIENTE']);
         var pacienteAge = allData[6];
+
+        ages.unshift(['Age','Quantity']);
+        sex.unshift(['Category','Quantity'])
+        region.unshift(['Region','Quantity']);
+        paciente.unshift(['Category','Quantity']);
 
         var dataAge = google.visualization.arrayToDataTable(ages);
         var dataSex = google.visualization.arrayToDataTable(sex);
@@ -68,36 +73,79 @@
         var optionsRegion = {'title': 'Region', 'width': 550, 'height': 400};
         var optionsPaciente = {'title': 'Pacient Type', 'width': 550, 'height': 400};
         var optionsPacienteAge = {'title': 'Pacient Type and Age', 'width': 550, 'height': 400};
-
         var chartAge = new google.visualization.ColumnChart(document.getElementById('ages'));
         chartAge.draw(dataAge, optionsAge);
-
         var chartSex = new google.visualization.PieChart(document.getElementById('sex'));
         chartSex.draw(dataSex, optionsSex);
-
         var chartAgeSex = new google.visualization.BarChart(document.getElementById('agessex'));
         chartAgeSex.draw(dataAgesSex, optionsAgeSex);
-
         var chartResult = new google.visualization.PieChart(document.getElementById('result'));
         chartResult.draw(dataResult, optionsResult);
-
         var chartRegion = new google.visualization.ColumnChart(document.getElementById('region'));
         chartRegion.draw(dataRegion, optionsRegion);
-
         var chartPaciente = new google.visualization.ColumnChart(document.getElementById('paciente'));
         chartPaciente.draw(dataPaciente, optionsPaciente);
-
         var chartPacienteAge = new google.visualization.BarChart(document.getElementById('pacienteage'));
         chartPacienteAge.draw(dataPacienteAge, optionsPacienteAge);
     }
 
+    function changeUI() {
+        var ages = document.getElementById("agesCheck").value;
+        var sex = document.getElementById("sexCheck").value;
+        var agesSex = document.getElementById("agesSexCheck").value;
+        var result = document.getElementById("resultCheck").value;
+        var region = document.getElementById("regionCheck").value;
+        var paciente = document.getElementById("pacienteCheck").value;
+        var pacienteAge = document.getElementById("pacienteAgeCheck").value;
+
+        if (ages == 'on') {
+            document.getElementById("ages").style.display = "";
+        } else {
+            document.getElementById("ages").style.display = "none";
+        }
+        if (sex == 'on') {
+            document.getElementById("sex").style.display = "";
+        } else {
+            document.getElementById("sex").style.display = "none";
+        }
+        if (agesSex == 'on') {
+            document.getElementById("agessex").style.display = "";
+        } else {
+            document.getElementById("agessex").style.display = "none";
+        }
+        if (result == 'on') {
+            document.getElementById("result").style.display = "";
+        } else {
+            document.getElementById("result").style.display = "none";
+        }
+        if (region == 'on') {
+            document.getElementById("region").style.display = "";
+        } else {
+            document.getElementById("region").style.display = "none";
+        }
+        if (paciente == 'on') {
+            document.getElementById("paciente").style.display = "";
+        } else {
+            document.getElementById("paciente").style.display = "none";
+        }
+        if (pacienteAge == 'on') {
+            document.getElementById("pacienteage").style.display = "";
+        } else {
+            document.getElementById("pacienteage").style.display = "none";
+        }
+
+    }
 </script>
-jinja template in action -->
+
+
+<!--jinja template in action -->
 {% for category, cat_value  in objs_list.items() %}
-    <h1>Category: {{category}}</h1>
+    <h1>Category: {{ category }}</h1>
     {% for key, value in cat_value.items() %}
-        <h2>Key: {{key}} Value: {{value}}</h2>
+        <h2>Key: {{ key }} Value: {{ value }}</h2>
     {% endfor %}
 {% endfor %}
+
+
 </body>
 </html>
