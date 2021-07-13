@@ -9,7 +9,7 @@ desc_file = "descriptor.json"
 
 
 
-def analize_file(data_file):
+def analize_file(data_file=None):
     covid_df = None
     mappings = {}
     catalogs = {}
@@ -19,8 +19,8 @@ def analize_file(data_file):
     mappings = desc["fields"]
     catalogs = load_catalogs(desc, catalogs)
     j_file.close()
-    results_path = os.path.join("./results/", data_file.split("/")[-1])
-    print(os.path.exists(results_path))
+    results_path = os.path.join("./results/", "result.xlsx")
+    
     if not os.path.exists(results_path):
         print("Loading data source...")
         # Load the main data source
@@ -46,7 +46,9 @@ def analize_file(data_file):
         covid_df = xl.parse('Sheet1')
         print("Sheet1 was persed sucessfully")
 
+
     return covid_df
+    
 
 def load_catalogs(desc, catalogs):
     print("Loading catalogs...")

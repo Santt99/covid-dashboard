@@ -42,7 +42,7 @@
 
     // Draw the chart and set the chart values
     function drawChart() {
-
+        
         var allData = {{ objs_list|safe }};
 
         var ages = allData[0];
@@ -93,10 +93,10 @@
 
 </script>
 jinja template in action -->
-{% for _param in objs_list %}
-    <p>  {{ _param }} </p>
-    {% for _value in _param %}
-        <p> {{ _value }}:::{{ _param[_value] }} </p>
+{% for category, cat_value  in objs_list.items() %}
+    <h1>Category: {{category}}</h1>
+    {% for key, value in cat_value.items() %}
+        <h2>Key: {{key}} Value: {{value}}</h2>
     {% endfor %}
 {% endfor %}
 </body>

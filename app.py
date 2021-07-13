@@ -1,6 +1,6 @@
 import flask
-from flask import Flask, request, jsonify
-from werkzeug.utils import secure_filename
+from flask import Flask, request, jsonify, redirect
+from werkzeug.utils import redirect, secure_filename
 import os
 from Analizer import analize_file
 import datetime
@@ -35,29 +35,11 @@ def upload():
         if file.filename == '':
             return "The file you try to upload dosen't have a name", 500
         if file and allowed_file(file.filename):
-            filename = "{}-".format(datetime.datetime.now()) + secure_filename(file.filename)
+            filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             analize_file(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return "File {} was saved successfully".format(filename), 200
+            return redirect("/", code=302)
 
-
-@app.route("/analize", methods=["GET"])
-def analize():
-    if request.method == 'GET':
-        body = request.get_json()
-        file_name = body["file-name"]
-        by = list(body["by"])
-        analizor = analize_file(os.path.join(app.config['UPLOAD_FOLDER'], file_name))
-        valid_columns = analizor.columns
-        if set(by).issubset(set(valid_columns)):
-            result = analizor[by]
-            result_json = result.to_json()
-            response = jsonify(result_json)
-            return response
-        else:
-            response = "One fo this keys is not a valid column {}, please use one of this: {}".format(by, valid_columns)
-            print(response)
-            return response, 500
 
 
 # index
@@ -73,33 +55,20 @@ def index():
         ['2030', 28, 19, 29, 30, 12, 13, '']
       ]
     '''
-    objs_list = [[['Age', 'Quantity'], [12, 12], [13, 1], [14, 7], [15, 45], [16, 76]],
-                 [['Task', 'Hours per Day'], ['Hombres', 40], ['Mujeres', 50], ['Otro', 10]], ['CDMX', 10], ['JAL', 90]]
+    bys = ["SEXO", "ENTIDAD_RES", "TIPO_PACIENTE", "EDAD"]
+    analizor = analize_file()
+    objs_list = {}
+    if type(analizor) != type(None) :
+        valid_columns = analizor.columns
+        if set(bys).issubset(set(valid_columns)):
+            for by in bys:
+                objs_list[by] = analizor[by].value_counts()
+            
+
     return flask.render_template('base.html', objs_list=objs_list)
 
-
-@app.route('/add', methods=["POST"])
-def add():
-    title = flask.request.form.get("title")  # get title from form
-    return flask.redirect(flask.url_for("index"))
-
-
-@app.route('/update/<int:todo_id>')
-def update(todo_id):
-    # update state of item
-    # todo = Todo.query.filter_by(id=todo_id).first()
-    # todo.complete = not todo.complete
-    # db.session.commit()
-    return flask.redirect(flask.url_for("index"))
-
-
-@app.route('/delete/<int:todo_id>')
-def delete(todo_id):
-    # delete state of item
-    # todo = Todo.query.filter_by(id=todo_id).first()
-    # db.session.delete(todo)
-    # db.session.commit()
-    return flask.redirect(flask.url_for("index"))
+    
+    
 
 
 if __name__ == "__main__":
