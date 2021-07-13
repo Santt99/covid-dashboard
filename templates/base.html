@@ -6,6 +6,17 @@
     <title>todo app</title>
 </head>
 <body>
+<h1> COVID STADISTICS </h1>
+<form action="/upload" method="post" enctype="multipart/form-data">
+    <div>
+        <label for="file"> Add File </label>
+        <input type="file" name="file">
+        <br>
+        <button type=submit>Submit</button>
+    </div>
+</form>
+
+<h4>Select the values you want to see</h4>
 <input type="checkbox" id="agesCheck" onchange="changeUI()"> <label for="agesCheck">Ages</label>
 <input type="checkbox" id="sexCheck" onchange="changeUI()"> <label for="sexCheck">Sex</label>
 <input type="checkbox" id="agesSexCheck" onchange="changeUI()"> <label for="agesSexCheck" disabled>Ages and sex</label>
@@ -24,15 +35,7 @@
 <div id="pacienteage" style="display: none"></div>
 
 
-<h1> todo app </h1>
-<form action="/upload" method="post" enctype="multipart/form-data">
-    <div>
-        <label for="file"> Add File </label>
-        <input type="file" name="file">
-        <br>
-        <button type=submit>Submit</button>
-    </div>
-</form>
+
 
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
